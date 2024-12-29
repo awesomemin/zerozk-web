@@ -144,7 +144,7 @@ export default function StreamingInfo({
         )}
       </section>
       <section>
-        <History history={history} />
+        <History history={history} setHistory={setHistory} />
       </section>
     </>
   );

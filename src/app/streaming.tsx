@@ -30,14 +30,19 @@ export default function StreamingInfo({
 
   return (
     <section className="mx-5">
-      <Image
-        src={currentStreaming.liveThumbnailImageUrl.replace('{type}', '480')}
-        width={853}
-        height={480}
-        alt="thumbnail of live streaming"
-        className="w-full rounded-lg"
-        quality={100}
-      />
+      <a
+        href={`https://chzzk.naver.com/live/${currentStreaming.channelId}`}
+        target="_blank"
+      >
+        <Image
+          src={currentStreaming.liveThumbnailImageUrl.replace('{type}', '1080')}
+          width={853}
+          height={480}
+          alt="thumbnail of live streaming"
+          className="w-full rounded-lg"
+          quality={100}
+        />
+      </a>
       <h2 className="font-bold mt-1">{currentStreaming.liveTitle}</h2>
       <div className="flex gap-1 items-center mt-1">
         <Image

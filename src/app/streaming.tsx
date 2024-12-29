@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Button from './button';
 
 export default function Streaming() {
   const streamingTitle = '페이트 스테이 나이트 리마스터 (페이트 모르는 뇌)';
@@ -26,6 +27,7 @@ export default function Streaming() {
       <div className="text-sm font-light text-center mt-2 py-1 bg-[#333333]">
         1시간 35분 째 방송 중
       </div>
+      <Button />
     </section>
   );
 }

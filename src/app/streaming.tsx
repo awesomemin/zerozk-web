@@ -4,12 +4,14 @@ import Image from 'next/image';
 import { Streaming } from '@/type';
 import { useEffect, useState } from 'react';
 import { getRandomStreaming } from '@/fetch';
+import History from './history';
 
 export default function StreamingInfo({
   initialStreaming,
 }: {
   initialStreaming: Streaming;
 }) {
+  const [history, setHistory] = useState<Streaming[]>([]);
   const [currentStreaming, setCurrentStreaming] = useState(initialStreaming);
   const [nextStreaming, setNextStreaming] =
     useState<Streaming>(initialStreaming);
@@ -23,61 +25,70 @@ export default function StreamingInfo({
   }, []);
 
   async function handleButtonClick() {
+    setHistory((prevHistory) => [currentStreaming, ...prevHistory]);
     setCurrentStreaming(nextStreaming);
     const randomStreaming = await getRandomStreaming();
     setNextStreaming(randomStreaming);
   }
 
   return (
-    <section className="mx-5">
-      <a
-        href={`https://chzzk.naver.com/live/${currentStreaming.channelId}`}
-        target="_blank"
-      >
-        <Image
-          src={currentStreaming.liveThumbnailImageUrl.replace('{type}', '1080')}
-          width={853}
-          height={480}
-          alt="thumbnail of live streaming"
-          className="w-full rounded-lg"
-          quality={100}
-        />
-      </a>
-      <h2 className="font-bold mt-1">{currentStreaming.liveTitle}</h2>
-      <div className="flex gap-1 items-center mt-1">
-        <Image
-          src={
-            currentStreaming.channelImageUrl ||
-            'https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na'
-          }
-          alt="profile picture of the channel"
-          width={120}
-          height={120}
-          className="w-6 h-6 rounded-full"
-        />
-        <p className="text-[#777777] font-bold">
-          {currentStreaming.channelName}
-        </p>
-        <div className="ml-auto bg-[#e01f1f] px-1 py-[2px] rounded font-bold text-xs">
-          LIVE
+    <>
+      <section className="mx-5">
+        <a
+          href={`https://chzzk.naver.com/live/${currentStreaming.channelId}`}
+          target="_blank"
+        >
+          <Image
+            src={currentStreaming.liveThumbnailImageUrl.replace(
+              '{type}',
+              '1080'
+            )}
+            width={853}
+            height={480}
+            alt="thumbnail of live streaming"
+            className="w-full rounded-lg"
+            quality={100}
+          />
+        </a>
+        <h2 className="font-bold mt-1">{currentStreaming.liveTitle}</h2>
+        <div className="flex gap-1 items-center mt-1">
+          <Image
+            src={
+              currentStreaming.channelImageUrl ||
+              'https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na'
+            }
+            alt="profile picture of the channel"
+            width={120}
+            height={120}
+            className="w-6 h-6 rounded-full"
+          />
+          <p className="text-[#777777] font-bold">
+            {currentStreaming.channelName}
+          </p>
+          <div className="ml-auto bg-[#e01f1f] px-1 py-[2px] rounded font-bold text-xs">
+            LIVE
+          </div>
+          <div className="bg-[#333333] px-1 py-[2px] rounded text-xs font-bold">
+            0명
+          </div>
         </div>
-        <div className="bg-[#333333] px-1 py-[2px] rounded text-xs font-bold">
-          0명
+        <div className="text-sm font-light text-center mt-2 py-1 bg-[#333333]">
+          {formatMilliseconds(
+            new Date().getTime() - new Date(currentStreaming.openDate).getTime()
+          )}
+          째 방송 중
         </div>
-      </div>
-      <div className="text-sm font-light text-center mt-2 py-1 bg-[#333333]">
-        {formatMilliseconds(
-          new Date().getTime() - new Date(currentStreaming.openDate).getTime()
-        )}
-        째 방송 중
-      </div>
-      <button
-        className="mt-2 w-full bg-[#00FFA3] text-black font-bold text-lg h-10"
-        onClick={handleButtonClick}
-      >
-        다른 스트리머 보기
-      </button>
-    </section>
+        <button
+          className="mt-2 w-full bg-[#00FFA3] text-black font-bold text-lg h-10"
+          onClick={handleButtonClick}
+        >
+          다른 스트리머 보기
+        </button>
+      </section>
+      <section>
+        <History history={history} />
+      </section>
+    </>
   );
 }
 

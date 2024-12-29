@@ -1,13 +1,31 @@
 import Image from 'next/image';
 import Button from './button';
+import { Streaming } from '@/type';
 
-export default function Streaming() {
-  const streamingTitle = '페이트 스테이 나이트 리마스터 (페이트 모르는 뇌)';
-  const channelName = '소풍왔니';
+export default async function StreamingInfo() {
+  const numberOfStreamingsWithZeroUser = await fetch(
+    'http://localhost:4000/streaming/number'
+  ).then((res) => res.json());
+  const currentStreaming: Streaming = await fetch(
+    `http://localhost:4000/streaming/${Math.floor(
+      Math.random() * numberOfStreamingsWithZeroUser
+    )}`
+  ).then((res) => res.json());
+
+  const streamingTitle = currentStreaming.liveTitle;
+  const channelName = currentStreaming.channelName;
+  const thumbnailImgUrl = currentStreaming.liveThumbnailImageUrl.replace(
+    '{type}',
+    '480'
+  );
+  const channelImgUrl = currentStreaming.channelImageUrl;
+  const liveStartTime = new Date(currentStreaming.openDate);
+  const currentTime = new Date();
+  const diffMs = currentTime.getTime() - liveStartTime.getTime();
   return (
     <section className="mx-5">
       <Image
-        src="https://livecloud-thumb.akamaized.net/chzzk/livecloud/KR/stream/26446578/live/9797902/record/35316513/thumbnail/image_480.jpg?date=1735456170000"
+        src={thumbnailImgUrl}
         width={853}
         height={480}
         alt="thumbnail of live streaming"
@@ -16,7 +34,10 @@ export default function Streaming() {
       <h2 className="font-bold mt-1">{streamingTitle}</h2>
       <div className="flex gap-1 items-center mt-1">
         <Image
-          src="https://nng-phinf.pstatic.net/MjAyNDEyMjJfMTgz/MDAxNzM0ODAwNjc0ODEx.K7HVG9c1uwzhhNUfDyHEKUVBsZ5Hn_xgsHzgxlyl5fUg.ki-y9g3mniRhaRsfJIUB6Df9U37Hlzz2pXER1Ue5WWAg.JPEG/SNOW_20241122_111516_397.jpg?type=f120_120_na"
+          src={
+            channelImgUrl ||
+            'https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na'
+          }
           alt="profile picture of the channel"
           width={120}
           height={120}
@@ -25,9 +46,20 @@ export default function Streaming() {
         <p className="text-[#777777] font-bold">{channelName}</p>
       </div>
       <div className="text-sm font-light text-center mt-2 py-1 bg-[#333333]">
-        1시간 35분 째 방송 중
+        {formatMilliseconds(diffMs)}째 방송 중
       </div>
       <Button />
     </section>
   );
+}
+
+function formatMilliseconds(ms: number) {
+  const hours = Math.floor(ms / (1000 * 60 * 60)); // 밀리초를 시간으로 변환
+  const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60)); // 나머지를 분으로 변환
+
+  if (hours === 0) {
+    return `${minutes}분`;
+  } else {
+    return `${hours}시간 ${minutes}분`;
+  }
 }

@@ -43,6 +43,9 @@ export default function StreamingInfo({
     setIsThumbnailLoaded(false);
     setIsChannelImageLoaded(false);
     setHistory((prevHistory) => [currentStreaming, ...prevHistory]);
+    if (history.length >= 30) {
+      setHistory((prevHistory) => prevHistory.slice(0, -1));
+    }
     setCurrentStreaming(nextStreaming);
     let randomStreaming = await getRandomStreaming();
     let found;

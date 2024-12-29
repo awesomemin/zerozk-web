@@ -11,6 +11,8 @@ export default function StreamingInfo({
 }: {
   initialStreaming: Streaming;
 }) {
+  const [isThumbnailLoaded, setIsThumbnailLoaded] = useState(false);
+  const [isChannelImageLoaded, setIsChannelImageLoaded] = useState(false);
   const [history, setHistory] = useState<Streaming[]>([]);
   const [currentStreaming, setCurrentStreaming] = useState(initialStreaming);
   const [nextStreaming, setNextStreaming] =
@@ -18,16 +20,41 @@ export default function StreamingInfo({
 
   useEffect(() => {
     async function getNextStreaming() {
-      const randomStreaming = await getRandomStreaming();
+      let randomStreaming = await getRandomStreaming();
+      let found;
+      while (true) {
+        found = history.find(
+          (streaming) => streaming.channelId === randomStreaming.channelId
+        );
+        if (
+          !found &&
+          randomStreaming.channelId !== currentStreaming.channelId
+        ) {
+          break;
+        }
+        randomStreaming = await getRandomStreaming();
+      }
       setNextStreaming(randomStreaming);
     }
     getNextStreaming();
   }, []);
 
   async function handleButtonClick() {
+    setIsThumbnailLoaded(false);
+    setIsChannelImageLoaded(false);
     setHistory((prevHistory) => [currentStreaming, ...prevHistory]);
     setCurrentStreaming(nextStreaming);
-    const randomStreaming = await getRandomStreaming();
+    let randomStreaming = await getRandomStreaming();
+    let found;
+    while (true) {
+      found = history.find(
+        (streaming) => streaming.channelId === randomStreaming.channelId
+      );
+      if (!found && randomStreaming.channelId !== currentStreaming.channelId) {
+        break;
+      }
+      randomStreaming = await getRandomStreaming();
+    }
     setNextStreaming(randomStreaming);
   }
 
@@ -43,13 +70,24 @@ export default function StreamingInfo({
               '{type}',
               '1080'
             )}
-            width={853}
-            height={480}
+            width={1920}
+            height={1080}
             alt="thumbnail of live streaming"
             className="w-full rounded-lg"
             quality={100}
+            priority
           />
         </a>
+        <Image
+          src={nextStreaming.liveThumbnailImageUrl.replace('{type}', '1080')}
+          width={1920}
+          height={1080}
+          alt="preloaded thumbnail"
+          className="hidden"
+          quality={100}
+          priority
+          onLoad={() => setIsThumbnailLoaded(true)}
+        />
         <h2 className="font-bold mt-1">{currentStreaming.liveTitle}</h2>
         <div className="flex gap-1 items-center mt-1">
           <Image
@@ -61,6 +99,19 @@ export default function StreamingInfo({
             width={120}
             height={120}
             className="w-6 h-6 rounded-full"
+            priority
+          />
+          <Image
+            src={
+              nextStreaming.channelImageUrl ||
+              'https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na'
+            }
+            alt="preloaded channelImage"
+            width={120}
+            height={120}
+            className="hidden"
+            priority
+            onLoad={() => setIsChannelImageLoaded(true)}
           />
           <p className="text-[#777777] font-bold">
             {currentStreaming.channelName}
@@ -78,12 +129,19 @@ export default function StreamingInfo({
           )}
           째 방송 중
         </div>
-        <button
-          className="mt-2 w-full bg-[#00FFA3] text-black font-bold text-lg h-10"
-          onClick={handleButtonClick}
-        >
-          다른 스트리머 보기
-        </button>
+        {!isChannelImageLoaded || !isThumbnailLoaded ? (
+          <div className="w-full h-10 mt-2 bg-[#00FFA3] flex items-center justify-center">
+            <div className="w-6 h-6 rounded-full border-4 border-t-transparent border-black animate-spin"></div>
+          </div>
+        ) : (
+          <button
+            className="mt-2 w-full bg-[#00FFA3] text-black font-bold text-lg h-10"
+            onClick={handleButtonClick}
+            disabled={!isChannelImageLoaded || !isThumbnailLoaded}
+          >
+            다른 스트리머 보기
+          </button>
+        )}
       </section>
       <section>
         <History history={history} />

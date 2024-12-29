@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { Streaming } from '@/type';
 import { useEffect, useState } from 'react';
 import { getRandomStreaming } from '@/fetch';
-import logo from '../../public/logo.png';
 
 export default function StreamingInfo({
   initialStreaming,
@@ -37,6 +36,7 @@ export default function StreamingInfo({
         height={480}
         alt="thumbnail of live streaming"
         className="w-full rounded-lg"
+        quality={100}
       />
       <h2 className="font-bold mt-1">{currentStreaming.liveTitle}</h2>
       <div className="flex gap-1 items-center mt-1">
@@ -53,6 +53,12 @@ export default function StreamingInfo({
         <p className="text-[#777777] font-bold">
           {currentStreaming.channelName}
         </p>
+        <div className="ml-auto bg-[#e01f1f] px-1 py-[2px] rounded font-bold text-xs">
+          LIVE
+        </div>
+        <div className="bg-[#333333] px-1 py-[2px] rounded text-xs font-bold">
+          0명
+        </div>
       </div>
       <div className="text-sm font-light text-center mt-2 py-1 bg-[#333333]">
         {formatMilliseconds(

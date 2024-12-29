@@ -1,41 +1,48 @@
+'use client';
+
 import Image from 'next/image';
-import Button from './button';
 import { Streaming } from '@/type';
+import { useEffect, useState } from 'react';
+import { getRandomStreaming } from '@/fetch';
+import logo from '../../public/logo.png';
 
-export default async function StreamingInfo() {
-  const numberOfStreamingsWithZeroUser = await fetch(
-    'http://localhost:4000/streaming/number'
-  ).then((res) => res.json());
-  const currentStreaming: Streaming = await fetch(
-    `http://localhost:4000/streaming/${Math.floor(
-      Math.random() * numberOfStreamingsWithZeroUser
-    )}`
-  ).then((res) => res.json());
+export default function StreamingInfo({
+  initialStreaming,
+}: {
+  initialStreaming: Streaming;
+}) {
+  const [currentStreaming, setCurrentStreaming] = useState(initialStreaming);
+  const [nextStreaming, setNextStreaming] =
+    useState<Streaming>(initialStreaming);
 
-  const streamingTitle = currentStreaming.liveTitle;
-  const channelName = currentStreaming.channelName;
-  const thumbnailImgUrl = currentStreaming.liveThumbnailImageUrl.replace(
-    '{type}',
-    '480'
-  );
-  const channelImgUrl = currentStreaming.channelImageUrl;
-  const liveStartTime = new Date(currentStreaming.openDate);
-  const currentTime = new Date();
-  const diffMs = currentTime.getTime() - liveStartTime.getTime();
+  useEffect(() => {
+    async function getNextStreaming() {
+      const randomStreaming = await getRandomStreaming();
+      setNextStreaming(randomStreaming);
+    }
+    getNextStreaming();
+  }, []);
+
+  async function handleButtonClick() {
+    setCurrentStreaming(nextStreaming);
+    const randomStreaming = await getRandomStreaming();
+    setNextStreaming(randomStreaming);
+  }
+
   return (
     <section className="mx-5">
       <Image
-        src={thumbnailImgUrl}
+        src={currentStreaming.liveThumbnailImageUrl.replace('{type}', '480')}
         width={853}
         height={480}
         alt="thumbnail of live streaming"
         className="w-full rounded-lg"
       />
-      <h2 className="font-bold mt-1">{streamingTitle}</h2>
+      <h2 className="font-bold mt-1">{currentStreaming.liveTitle}</h2>
       <div className="flex gap-1 items-center mt-1">
         <Image
           src={
-            channelImgUrl ||
+            currentStreaming.channelImageUrl ||
             'https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na'
           }
           alt="profile picture of the channel"
@@ -43,12 +50,22 @@ export default async function StreamingInfo() {
           height={120}
           className="w-6 h-6 rounded-full"
         />
-        <p className="text-[#777777] font-bold">{channelName}</p>
+        <p className="text-[#777777] font-bold">
+          {currentStreaming.channelName}
+        </p>
       </div>
       <div className="text-sm font-light text-center mt-2 py-1 bg-[#333333]">
-        {formatMilliseconds(diffMs)}째 방송 중
+        {formatMilliseconds(
+          new Date().getTime() - new Date(currentStreaming.openDate).getTime()
+        )}
+        째 방송 중
       </div>
-      <Button />
+      <button
+        className="mt-2 w-full bg-[#00FFA3] text-black font-bold text-lg h-10"
+        onClick={handleButtonClick}
+      >
+        다른 스트리머 보기
+      </button>
     </section>
   );
 }

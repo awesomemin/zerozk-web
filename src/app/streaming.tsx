@@ -9,22 +9,27 @@ import History from './history';
 export default function StreamingInfo({
   initialStreaming,
 }: {
-  initialStreaming: Streaming;
+  initialStreaming: Streaming | null;
 }) {
   const [isThumbnailLoaded, setIsThumbnailLoaded] = useState(false);
   const [isChannelImageLoaded, setIsChannelImageLoaded] = useState(false);
   const [history, setHistory] = useState<Streaming[]>([]);
   const [currentStreaming, setCurrentStreaming] = useState(initialStreaming);
-  const [nextStreaming, setNextStreaming] =
-    useState<Streaming>(initialStreaming);
+  const [nextStreaming, setNextStreaming] = useState(initialStreaming);
 
   useEffect(() => {
     async function getNextStreaming() {
       let randomStreaming = await getRandomStreaming();
+      if (!randomStreaming || !currentStreaming) {
+        return;
+      }
       let found;
       while (true) {
+        if (!randomStreaming) {
+          return;
+        }
         found = history.find(
-          (streaming) => streaming.channelId === randomStreaming.channelId
+          (streaming) => streaming.channelId === randomStreaming?.channelId
         );
         if (
           !found &&
@@ -42,6 +47,7 @@ export default function StreamingInfo({
   async function handleButtonClick() {
     setIsThumbnailLoaded(false);
     setIsChannelImageLoaded(false);
+    if (!currentStreaming) return;
     setHistory((prevHistory) => [currentStreaming, ...prevHistory]);
     if (history.length >= 30) {
       setHistory((prevHistory) => prevHistory.slice(0, -1));
@@ -51,17 +57,39 @@ export default function StreamingInfo({
     let found;
     while (true) {
       found = history.find(
-        (streaming) => streaming.channelId === randomStreaming.channelId
+        (streaming) => streaming.channelId === randomStreaming?.channelId
       );
-      if (!found && randomStreaming.channelId !== currentStreaming.channelId) {
+      if (!found && randomStreaming?.channelId !== currentStreaming.channelId) {
         break;
       }
       randomStreaming = await getRandomStreaming();
     }
     setNextStreaming(randomStreaming);
-    if (!randomStreaming.channelImageUrl) {
+    if (!randomStreaming?.channelImageUrl) {
       setIsChannelImageLoaded(true);
     }
+  }
+
+  if (!currentStreaming || !nextStreaming) {
+    return (
+      <div className="flex flex-col items-center text-center gap-2 mt-20">
+        <div className="text-xl font-bold">잠시만 기다려주세요.</div>
+        <div className="text-sm">
+          시청자가 0명인 스트리머 정보를 수집하고 있습니다.
+        </div>
+        <div className="text-sm text-[#777777]">
+          보통 이 작업은 3분 이내로 완료됩니다.
+        </div>
+        <button
+          onClick={() => {
+            location.reload();
+          }}
+          className="bg-[#00FFA3] text-black w-fit px-2 py-1 rounded-lg font-semibold"
+        >
+          새로고침
+        </button>
+      </div>
+    );
   }
 
   return (

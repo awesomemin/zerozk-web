@@ -5,12 +5,14 @@ import { Streaming } from '@/type';
 import { useEffect, useState } from 'react';
 import { getRandomStreaming } from '@/fetch';
 import History from './history';
+import Info from './info';
 
 export default function StreamingInfo({
   initialStreaming,
 }: {
   initialStreaming: Streaming | null;
 }) {
+  const [isInfoVisible, setIsInfoVisible] = useState(true);
   const [isThumbnailLoaded, setIsThumbnailLoaded] = useState(false);
   const [isChannelImageLoaded, setIsChannelImageLoaded] = useState(false);
   const [history, setHistory] = useState<Streaming[]>([]);
@@ -95,6 +97,7 @@ export default function StreamingInfo({
   return (
     <>
       <section className="mx-5">
+        {isInfoVisible && <Info setIsInfoVisible={setIsInfoVisible} />}
         <a
           href={`https://chzzk.naver.com/live/${currentStreaming.channelId}`}
           target="_blank"

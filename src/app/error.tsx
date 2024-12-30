@@ -24,7 +24,7 @@ export default function Error({
         onClick={() => {
           location.reload();
         }}
-        className="bg-[#00FFA3] text-black w-fit px-2 py-1 rounded-lg font-semibold"
+        className="bg-[#00FFA3] text-black w-fit px-2 py-1 rounded-lg font-semibold mt-5"
       >
         새로고침
       </button>

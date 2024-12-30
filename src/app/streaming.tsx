@@ -95,8 +95,8 @@ export default function StreamingInfo({
   }
 
   return (
-    <>
-      <section className="mx-5">
+    <div className="mx-5 md:flex md:gap-10">
+      <div className="md:flex-grow">
         {isInfoVisible && <Info setIsInfoVisible={setIsInfoVisible} />}
         <a
           href={`https://chzzk.naver.com/live/${currentStreaming.channelId}`}
@@ -160,6 +160,8 @@ export default function StreamingInfo({
             0명
           </div>
         </div>
+      </div>
+      <div className="md:min-w-96">
         <div className="text-sm font-light text-center mt-2 py-1 bg-[#333333]">
           {formatMilliseconds(
             new Date().getTime() - new Date(currentStreaming.openDate).getTime()
@@ -179,11 +181,9 @@ export default function StreamingInfo({
             다른 스트리머 보기
           </button>
         )}
-      </section>
-      <section>
         <History history={history} setHistory={setHistory} />
-      </section>
-    </>
+      </div>
+    </div>
   );
 }
 

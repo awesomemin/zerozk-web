@@ -95,8 +95,8 @@ export default function StreamingInfo({
   }
 
   return (
-    <div className="mx-5 md:flex md:gap-10">
-      <div className="md:flex-grow">
+    <div className="mx-5 lg:flex lg:gap-10">
+      <div className="lg:flex-grow">
         {isInfoVisible && <Info setIsInfoVisible={setIsInfoVisible} />}
         <a
           href={`https://chzzk.naver.com/live/${currentStreaming.channelId}`}
@@ -161,7 +161,7 @@ export default function StreamingInfo({
           </div>
         </div>
       </div>
-      <div className="md:min-w-96">
+      <div className="lg:w-80">
         <div className="text-sm font-light text-center mt-2 py-1 bg-[#333333]">
           {formatMilliseconds(
             new Date().getTime() - new Date(currentStreaming.openDate).getTime()

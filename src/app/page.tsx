@@ -6,7 +6,7 @@ export default async function Home() {
   const initialStreaming = await getRandomStreaming();
 
   return (
-    <div className="md:mx-60">
+    <div className="lg:mx-60">
       <Header />
       <StreamingInfo initialStreaming={initialStreaming} />
     </div>

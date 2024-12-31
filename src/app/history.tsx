@@ -11,7 +11,7 @@ export default function History({
   setHistory: Dispatch<SetStateAction<Streaming[]>>;
 }) {
   return (
-    <div className="flex flex-col mt-4 md:min-w-96 md:max-h-[80vh] md:overflow-y-scroll">
+    <div className="flex flex-col mt-4 lg:w-80 lg:max-h-[80vh] lg:overflow-y-scroll">
       <h2 className="flex items-center justify-center text-center font-bold tracking-widest">
         히스토리
         <span className="tracking-normal font-medium text-[#777777] text-sm">

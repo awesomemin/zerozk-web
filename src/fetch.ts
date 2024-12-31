@@ -2,7 +2,7 @@ import { Streaming } from './type';
 
 export async function getRandomStreaming(): Promise<Streaming | null> {
   const numberOfStreamingsWithZeroUserResponse = await fetch(
-    'http://192.168.0.6:4000/streaming/number'
+    'http://zerozk:6000/streaming/number'
   );
   if (!numberOfStreamingsWithZeroUserResponse.ok) {
     return null;
@@ -13,7 +13,7 @@ export async function getRandomStreaming(): Promise<Streaming | null> {
     return null;
   }
   const randomStreamingResponse = await fetch(
-    `http://192.168.0.6:4000/streaming/${Math.floor(
+    `http://zerozk:6000/streaming/${Math.floor(
       Math.random() * numberOfStreamingsWithZeroUser
     )}`
   );

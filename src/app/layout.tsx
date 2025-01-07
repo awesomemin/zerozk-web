@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import localFont from 'next/font/local';
+import Script from 'next/script';
 
 const pretendard = localFont({
   src: '../../public/PretendardVariable.woff2',
@@ -19,6 +20,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={pretendard.className}>
+      <head>
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-PML59TRJFY"
+        ></Script>
+        <Script id="gtm">
+          {`
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PML59TRJFY');`}
+        </Script>
+      </head>
       <body>{children}</body>
     </html>
   );

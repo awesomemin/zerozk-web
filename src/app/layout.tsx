@@ -33,7 +33,7 @@ export default function RootLayout({
 
   gtag('config', 'G-PML59TRJFY');`}
         </Script>
-        <Script id="clarity">
+        <script>
           {`
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -41,7 +41,7 @@ export default function RootLayout({
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "pqqbkmus4z");
   `}
-        </Script>
+        </script>
       </head>
       <body>{children}</body>
     </html>
